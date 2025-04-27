@@ -13,4 +13,4 @@ start:
 	java -jar target/metodos-t1-1.0-SNAPSHOT-jar-with-dependencies.jar ./modelo.yaml
 
 
-.PHONY: all bootstrap install start populate destroy clean shell help
+.PHONY: all install start
