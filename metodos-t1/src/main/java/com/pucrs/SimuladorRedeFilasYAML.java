@@ -1,11 +1,16 @@
 package com.pucrs;
 
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Random;
+
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 public class SimuladorRedeFilasYAML {
 
@@ -100,7 +105,9 @@ public class SimuladorRedeFilasYAML {
     // === Leitura do YAML ===
 
     private void loadModel(String yamlFile) throws Exception {
-        Yaml yaml = new Yaml(new Constructor(Model.class));
+        LoaderOptions options = new LoaderOptions();
+        Constructor constructor = new Constructor(Model.class, options);
+        Yaml yaml = new Yaml(constructor);
         try (InputStream in = new FileInputStream(yamlFile)) {
             model = yaml.load(in);
         }
