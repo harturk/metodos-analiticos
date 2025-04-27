@@ -7,6 +7,7 @@ COPY pom.xml .
 RUN mvn dependency:go-offline
 
 COPY src ./src
+COPY modelo.yaml ./modelo.yaml
 RUN mvn package -DskipTests
 
 # Use a smaller Java image for running
@@ -16,4 +17,4 @@ WORKDIR /app
 
 COPY --from=build /app/target/metodos-t1-1.0-SNAPSHOT.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "./modelo.yaml"]
