@@ -1,0 +1,7 @@
+services:
+    metodos-t1:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: metodos-t1
+        image: metodos-t1:latest
