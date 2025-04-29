@@ -12,7 +12,7 @@ public class Model {
 
   public static class QueueDef {
     public int servers;
-    public int capacity;
+    public String capacity;
     public Double minArrival;
     public Double maxArrival;
     public double minService;

@@ -21,7 +21,13 @@ public class Fila {
     this.maxService = maxService;
     this.customers = 0;
     this.loss = 0;
-    this.times = new double[capacity + 1];
+
+    if (capacity == Integer.MAX_VALUE) {
+      this.times = new double[80000];
+    } else {
+      this.times = new double[capacity + 1];
+    }
+
     this.lastUpdate = 0.0;
     this.routings = new ArrayList<>();
   }
@@ -72,9 +78,11 @@ public class Fila {
 
   public void updateTime(double now) {
     double delta = now - lastUpdate;
-    if (customers >= 0 && customers <= capacity) {
-      times[customers] += delta;
+    int state = customers;
+    if (state >= times.length) {
+      state = times.length - 1; // Agrupa todos clientes acima do limite no último índice
     }
+    times[state] += delta;
     lastUpdate = now;
   }
 

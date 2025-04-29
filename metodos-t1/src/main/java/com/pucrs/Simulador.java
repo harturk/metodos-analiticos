@@ -60,15 +60,28 @@ public class Simulador {
     queues = new ArrayList<>();
     queueMap = new HashMap<>();
     scheduler = new Escalonador();
-    utils = new SimuladorUtils(model.rndnumbersPerSeed);
+    utils = new SimuladorUtils(model.rndnumbersPerSeed, model.seeds.get(0));
 
     int idx = 0;
     for (Map.Entry<String, Model.QueueDef> entry : model.queues.entrySet()) {
       Model.QueueDef def = entry.getValue();
+
+      int capacity;
+
+      if (def.capacity.equalsIgnoreCase("INF")) {
+        capacity = Integer.MAX_VALUE;
+      } else {
+        try {
+          capacity = Integer.parseInt(def.capacity);
+        } catch (NumberFormatException e) {
+          throw new IllegalArgumentException("Invalid capacity: " + def.capacity);
+        }
+      }
+
       Fila queue = new Fila(
           entry.getKey(),
           def.servers,
-          def.capacity,
+          capacity,
           def.minArrival,
           def.maxArrival,
           def.minService,
@@ -107,7 +120,7 @@ public class Simulador {
       }
     }
 
-    if (queue.getMinArrival() != null) {
+    if (event.getSource() == -1 && queue.getMinArrival() != null) {
       double interArrival = utils.uniform(queue.getMinArrival(), queue.getMaxArrival());
       scheduler.addEvent(new Evento(currentTime + interArrival, -1, event.getTarget(), 0));
     }
@@ -140,15 +153,37 @@ public class Simulador {
   private void showResults(double simulationTime) {
     System.out.printf("=== Fim da simulação (tempo %.4f) ===\n\n", simulationTime);
     for (Fila queue : queues) {
-      System.out.println("Fila " + queue.getName() + ":");
-      System.out.println("  Clientes perdidos: " + queue.loss());
+      System.out.println("*********************************************************");
+
+      String header = String.format("Queue:   %s (G/G/%d%s)",
+          queue.getName(),
+          queue.servers(),
+          queue.capacity() == Integer.MAX_VALUE ? "" : ("/" + queue.capacity()));
+      System.out.println(header);
+
+      if (queue.getMinArrival() != null) {
+        System.out.printf("Arrival: %.1f ... %.1f\n", queue.getMinArrival(), queue.getMaxArrival());
+      }
+
+      System.out.printf("Service: %.1f ... %.1f\n", queue.getMinService(), queue.getMaxService());
+
+      System.out.println("*********************************************************");
+      System.out.printf("%6s %20s %22s\n", "State", "Time", "Probability");
+
       double[] times = queue.getTimes();
       for (int i = 0; i < times.length; i++) {
-        double percent = (simulationTime > 0) ? (times[i] / simulationTime) * 100 : 0;
-        System.out.printf("    [%2d clientes] %.2f%% do tempo\n", i, percent);
+        if (times[i] > 0.0) {
+          double percent = (simulationTime > 0) ? (times[i] / simulationTime) * 100 : 0;
+          System.out.printf("%6d %20.4f %21.2f%%\n", i, times[i], percent);
+        }
       }
-      System.out.println();
+
+      System.out.printf("\nNumber of losses: %d\n\n", queue.loss());
     }
+
+    System.out.println("=========================================================");
+    System.out.printf("Simulation average time: %.4f\n", simulationTime);
+    System.out.println("=========================================================");
   }
 
   public static void main(String[] args) throws Exception {

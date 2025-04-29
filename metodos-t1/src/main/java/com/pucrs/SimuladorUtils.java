@@ -8,26 +8,23 @@ public class SimuladorUtils {
   private final int maxRandomNum;
   private int used;
 
-  public SimuladorUtils(int maxRandomNum) {
-    this.generator = new Random();
+  public SimuladorUtils(int maxRandomNum, int seed) {
+    this.generator = new Random(seed);
     this.maxRandomNum = maxRandomNum;
     this.used = 0;
   }
 
   public double uniform(double min, double max) {
-    if (used >= maxRandomNum) {
-      throw new RuntimeException("Limite de números aleatórios atingido.");
-    }
-    used++;
-    return min + (max - min) * generator.nextDouble();
+    return min + (max - min) * uniform01();
   }
 
   public double uniform01() {
-    if (used >= maxRandomNum) {
+    if (used >= maxRandomNum)
       throw new RuntimeException("Limite de números aleatórios atingido.");
-    }
+
+    double val = generator.nextDouble();
     used++;
-    return generator.nextDouble();
+    return val;
   }
 
   public int getUsed() {
