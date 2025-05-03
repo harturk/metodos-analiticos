@@ -1,2 +1,85 @@
-mvn clean package
+# Instruções para Executar o Projeto
+
+## Requisitos
+
+- **Java 17** (ou superior) instalado no sistema.
+- **Make** (opcional)
+
+## Sobre o arquivo `modelo.yaml`
+
+O arquivo `modelo.yaml` contém os parâmetros de configuração para a simulação, como definições de filas, servidores, tempos de chegada e atendimento, probabilidades de roteamento e sementes aleatórias.
+
+Um exemplo de arquivo `modelo.yaml` que pode ser utilizado (e que utilizamos para a execução dos requisitos do trabalho) segue abaixo:
+
+```yaml
+!PARAMETERS
+arrivals:
+  Q1: 2.0 # instante do 1º cliente em Q1
+queues:
+  Q1:
+    servers: 1
+    capacity: "INF"
+    minArrival: 2.0
+    maxArrival: 4.0
+    minService: 1.0
+    maxService: 2.0
+  Q2:
+    servers: 2
+    capacity: 5
+    minService: 4.0
+    maxService: 8.0
+  Q3:
+    servers: 2
+    capacity: 10
+    minService: 5.0
+    maxService: 15.0
+
+network:
+  - source: Q1
+    target: Q2
+    probability: 0.8
+  - source: Q1
+    target: Q3
+    probability: 0.2
+  - source: Q2
+    target: Q1
+    probability: 0.3
+  - source: Q2
+    target: Q3
+    probability: 0.5
+  - source: Q2
+    target: EXIT
+    probability: 0.2
+  - source: Q3
+    target: Q2
+    probability: 0.7
+  - source: Q3
+    target: EXIT
+    probability: 0.3
+
+rndnumbersPerSeed: 100000
+seeds:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+```
+
+Certifique-se de manter a estrutura YAML correta e ajustar os valores conforme necessário para a simulação.
+
+## Execução
+
+Certifique-se de ter o arquivo `modelo.yaml` no mesmo diretório do `.jar` ou forneça o caminho correto para ele.
+
+Para executar o programa, utilize os seguintes comandos no terminal:
+
+```bash
 java -jar target/metodos-t1-1.0-SNAPSHOT-jar-with-dependencies.jar ./modelo.yaml
+```
+
+Caso tiver instalado Make na sua máquina, basta rodar:
+
+```bash
+make start
+```
