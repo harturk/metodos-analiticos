@@ -1,0 +1,81 @@
+name: "Hospital"
+description: "Simulação de um sistema de atendimento hospitalar"
+seed: 1
+maxRandom: 100000
+
+queues:
+    - name: "TRIAGEM"
+      code: 1
+      capacity: 10
+      servers: 2
+      arrivalMin: 5.0
+      arrivalMax: 10.0
+      serviceMin: 5.0
+      serviceMax: 15.0
+      arrival:
+          distribution: "uniform"
+          parameters:
+              - 5.0
+              - 10.0
+      service:
+          distribution: "uniform"
+          parameters:
+              - 5.0
+              - 15.0
+      scheduledArrivals:
+          - time: 5.0
+            quantity: 1
+
+    - name: "CONSULTORIOS"
+      code: 2
+      capacity: 15
+      servers: 3
+      serviceMin: 10.0
+      serviceMax: 30.0
+      arrival:
+          distribution: "none"
+      service:
+          distribution: "uniform"
+          parameters:
+              - 10.0
+              - 30.0
+
+    - name: "LABORATORIO"
+      code: 3
+      capacity: 20
+      servers: 2
+      serviceMin: 8.0
+      serviceMax: 15.0
+      arrival:
+          distribution: "none"
+      service:
+          distribution: "uniform"
+          parameters:
+              - 8.0
+              - 15.0
+
+routing:
+    - from: 1
+      to: 2
+      probability: 0.7
+    - from: 1
+      to: 3
+      probability: 0.2
+    - from: 1
+      to: 0
+      probability: 0.1
+    - from: 2
+      to: 1
+      probability: 0.5
+    - from: 2
+      to: 3
+      probability: 0.3
+    - from: 2
+      to: 0
+      probability: 0.2
+    - from: 3
+      to: 1
+      probability: 0.2
+    - from: 3
+      to: 0
+      probability: 0.8

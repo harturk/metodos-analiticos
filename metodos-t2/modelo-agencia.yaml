@@ -1,0 +1,43 @@
+!PARAMETERS
+rndnumbersPerSeed: 100000
+seeds:
+    - 1
+
+arrivals:
+    RECEPCAO: 3.0
+
+queues:
+    RECEPCAO:
+        servers: 2
+        capacity: 8
+        minArrival: 3.0
+        maxArrival: 8.0
+        minService: 2.0
+        maxService: 6.0
+    CAIXA:
+        servers: 3
+        capacity: 12
+        minService: 5.0
+        maxService: 10.0
+    GERENCIA:
+        servers: 1
+        capacity: 5
+        minService: 15.0
+        maxService: 25.0
+
+network:
+    - source: RECEPCAO
+      target: CAIXA
+      probability: 0.6
+    - source: RECEPCAO
+      target: GERENCIA
+      probability: 0.3
+    - source: CAIXA
+      target: RECEPCAO
+      probability: 0.2
+    - source: CAIXA
+      target: GERENCIA
+      probability: 0.1
+    - source: GERENCIA
+      target: RECEPCAO
+      probability: 0.2
